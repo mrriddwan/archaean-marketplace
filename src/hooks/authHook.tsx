@@ -1,6 +1,6 @@
-import { useGoogleLogin } from "@react-oauth/google";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
-import { useUserContext } from "../contexts/userContext";
+import { initialUserContext, useUserContext } from "../contexts/userContext";
 import { authService } from "../services/authService";
 
 interface ICookie {
@@ -18,7 +18,7 @@ export function useAuthHook() {
   const { setUserContext } = useUserContext();
 
   const fetchUserInfo = async (access_token: string) => {
-    const userInfo = await authService.fetchUserInfo(access_token);
+    const userInfo = await authService.getUserGoogleInfo(access_token);
 
     if (userInfo.data) {
       console.log({ userInfo });
@@ -39,20 +39,50 @@ export function useAuthHook() {
     setIsAuthenticating(false);
   };
 
-  const googleLogin = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      console.log({ tokenResponse });
-      setAuthCookie({
-        ...authCookie,
-        accessToken: tokenResponse.access_token,
-        expiresIn: tokenResponse.expires_in,
-      });
-      fetchUserInfo(tokenResponse.access_token);
+  const loginWithGoogle = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: (codeResponse) => {
+      console.log({ codeResponse });
+
+      (async () => {
+        try {
+          //1. get refresh token, accessToken, expires
+          const tokenResponse = await authService.getRefreshToken(
+            codeResponse.code
+          );
+
+          if (tokenResponse?.data) {
+            const responseData = tokenResponse.data;
+
+            // 2. set Cookie with required auth details
+            setAuthCookie({
+              refreshToken: responseData.refresh_token,
+              accessToken: responseData.access_token,
+              expiresIn: responseData.expires_in,
+            });
+            // 3. get user info with access token
+            fetchUserInfo(responseData.access_token);
+
+            // 4. get new Access token before expires
+            setTimeout(() => {
+              // gets a new token for you after 10 seconds (test purpose)
+              authService.getNewAccessToken(responseData.refresh_token);
+            }, 10000);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      })();
     },
     onError: (error) => {
       console.log({ error });
     },
   });
+
+  const logout = () => {
+    googleLogout();
+    setUserContext(initialUserContext);
+  };
 
   return {
     //states
@@ -64,6 +94,7 @@ export function useAuthHook() {
 
     //methods
     fetchUserInfo,
-    googleLogin,
+    loginWithGoogle,
+    logout,
   };
 }
