@@ -16,7 +16,7 @@ interface IUserContextValue {
   setUserContext: React.Dispatch<React.SetStateAction<IUser>>;
 }
 
-const initialUser = {
+export const initialUserContext = {
     id: null,
     email: "",
     name: "",
@@ -28,14 +28,14 @@ const initialUser = {
   }
 
 const UserContext = createContext<IUserContextValue>({
-  userContext: initialUser,
+  userContext: initialUserContext,
   setUserContext: () => {},
 });
 
 export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<IUser>(initialUser);
+  const [user, setUser] = useState<IUser>(initialUserContext);
 
   const contextValue = useMemo(
     () => ({ userContext: user, setUserContext: setUser }),
