@@ -1,11 +1,16 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./App.css";
 import { Login } from "./components/auth/Login.auth";
+import { UserContextProvider } from "./contexts/userContext";
 
 function App() {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   return (
-    <div className="">
-      <Login />
-    </div>
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <UserContextProvider>
+        <Login />
+      </UserContextProvider>
+    </GoogleOAuthProvider>
   );
 }
 
