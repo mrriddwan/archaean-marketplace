@@ -1,7 +1,14 @@
 import { createContext, useContext, useMemo, useState } from "react";
 
 interface IUser {
-  user: { email: string } | null;
+  id: string | null;
+  email: string;
+  name: string;
+  picture: string;
+  given_name: string;
+  family_name: string;
+  email_verified: string;
+  isAuthenticated: boolean;
 }
 
 interface IUserContextValue {
@@ -9,17 +16,26 @@ interface IUserContextValue {
   setUserContext: React.Dispatch<React.SetStateAction<IUser>>;
 }
 
+const initialUser = {
+    id: null,
+    email: "",
+    name: "",
+    picture: "",
+    given_name: "",
+    family_name: "",
+    email_verified: "",
+    isAuthenticated: false,
+  }
+
 const UserContext = createContext<IUserContextValue>({
-  userContext: { user: null },
+  userContext: initialUser,
   setUserContext: () => {},
 });
 
 export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<IUser>({
-    user: null,
-  });
+  const [user, setUser] = useState<IUser>(initialUser);
 
   const contextValue = useMemo(
     () => ({ userContext: user, setUserContext: setUser }),
@@ -27,9 +43,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   return (
-    <UserContext.Provider value={contextValue}>
-      {children}
-    </UserContext.Provider>
+    <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
   );
 };
 
