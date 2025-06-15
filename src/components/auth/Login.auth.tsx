@@ -2,7 +2,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useAuthHook } from "../../hooks/authHook";
 
 export const Login = () => {
-  const { googleLogin, setIsAuthenticating, isAuthenticating } = useAuthHook();
+  const { loginWithGoogle, setIsAuthenticating, isAuthenticating } = useAuthHook();
 
   return (
     <div className="min-h-screen min-w-screen flex items-center justify-center bg-gray-100">
@@ -18,7 +18,7 @@ export const Login = () => {
           className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm hover:scale-105"
           disabled={isAuthenticating}
           onClick={() => {
-            googleLogin();
+            loginWithGoogle();
             setIsAuthenticating(true);
           }}
         >
