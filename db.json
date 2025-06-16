@@ -1,0 +1,76 @@
+{
+    "products": [
+        {
+            "id": 1,
+            "title": "Product 1",
+            "price": 19.99,
+            "description": "Lorem ipsum dolor sit amet",
+            "category": "electronics",
+            "image": "https://via.placeholder.com/150",
+            "rating": {
+                "rate": 4.5,
+                "count": 120
+            }
+        },
+        {
+            "id": 2,
+            "title": "Product 2",
+            "price": 29.99,
+            "description": "Lorem ipsum dolor sit amet consectetur",
+            "category": "clothing",
+            "image": "https://via.placeholder.com/150",
+            "rating": {
+                "rate": 4.2,
+                "count": 85
+            }
+        },
+        {
+            "id": 3,
+            "title": "Product 3",
+            "price": 39.99,
+            "description": "Lorem ipsum dolor sit amet consectetur adipiscing",
+            "category": "home",
+            "image": "https://via.placeholder.com/150",
+            "rating": {
+                "rate": 4.8,
+                "count": 203
+            }
+        },
+        {
+            "id": 4,
+            "title": "Product 4",
+            "price": 15.99,
+            "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit",
+            "category": "books",
+            "image": "https://via.placeholder.com/150",
+            "rating": {
+                "rate": 4.1,
+                "count": 67
+            }
+        },
+        {
+            "id": 5,
+            "title": "Product 5",
+            "price": 49.99,
+            "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit sed",
+            "category": "sports",
+            "image": "https://via.placeholder.com/150",
+            "rating": {
+                "rate": 4.6,
+                "count": 154
+            }
+        },
+        {
+            "id": 6,
+            "title": "Product 6",
+            "price": 24.99,
+            "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do",
+            "category": "electronics",
+            "image": "https://via.placeholder.com/150",
+            "rating": {
+                "rate": 4.3,
+                "count": 92
+            }
+        }
+    ]
+}
