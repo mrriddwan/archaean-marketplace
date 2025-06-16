@@ -1,7 +1,7 @@
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import { initialUserContext, useUserContext } from "../contexts/userContext";
-import { authService } from "../services/authService";
+import { authService } from "../services/auth.service";
 
 interface ICookie {
   accessToken: string | null;
