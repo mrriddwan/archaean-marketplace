@@ -3,8 +3,12 @@ import { useEffect, useState } from "react";
 import { productService } from "../../services/product.service";
 import { FaFilter } from "react-icons/fa";
 import FilterDrawer from "./FilterDrawer";
+import { RxAvatar } from "react-icons/rx";
+import { ProductItem } from "./ProductItem";
+import { Pagination } from "../util/Pagination"; // ensure this component exists
+import { usePagination } from "../../hooks/paginationHook";
 
-interface IProduct {
+export interface IProduct {
   id: number;
   title: string;
   price: number;
@@ -18,29 +22,57 @@ interface IProduct {
 }
 
 export const ProductMain = () => {
-  const [products, setProducts] = useState<IProduct[]>([]);
+  const [allProducts, setAllProducts] = useState<IProduct[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // index type
   const productIndexQuery = useQuery({
-    queryKey: [
-      "products",
-      {
-        page: 1,
-        per_page: 2,
-      },
-    ],
+    queryKey: ["products", { page: 1 }],
     queryFn: productService.getProducts,
-    // enabled: Boolean(user && type),
   });
 
+  const {
+    currentItems: currentProducts,
+    totalPages,
+    currentPage,
+    paginate,
+    setCurrentPage,
+    perPage,
+    setPerPage,
+  } = usePagination(filteredProducts);
+
   useEffect(() => {
-    if (productIndexQuery.isSuccess) {
-      setProducts(productIndexQuery.data);
+    if (productIndexQuery.isSuccess && productIndexQuery.data) {
+      setAllProducts(productIndexQuery.data);
+      applySearchFilter(productIndexQuery.data, searchQuery);
     }
   }, [productIndexQuery.isSuccess, productIndexQuery.data]);
 
-  // Handle overlay click and keyboard events
+  useEffect(() => {
+    applySearchFilter(allProducts, searchQuery);
+    setCurrentPage(1);
+  }, [searchQuery, allProducts]);
+
+  const applySearchFilter = (productsToFilter: IProduct[], query: string) => {
+    if (!query) {
+      setFilteredProducts(productsToFilter);
+      return;
+    }
+    const lowercasedQuery = query.toLowerCase();
+    const filtered = productsToFilter.filter(
+      (product) =>
+        product.title.toLowerCase().includes(lowercasedQuery) ||
+        product.description.toLowerCase().includes(lowercasedQuery) ||
+        product.category.toLowerCase().includes(lowercasedQuery)
+    );
+    setFilteredProducts(filtered);
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
   const handleOverlayInteraction = (
     event: React.MouseEvent | React.KeyboardEvent
   ) => {
@@ -54,37 +86,58 @@ export const ProductMain = () => {
   };
 
   return (
-    <div className="min-h-screen min-w-screen bg-gray-100 p-10 relative">
-      {/* Search bar */}
-      <div className="mb-8 w-[40%]">
-        <input
-          type="text"
-          placeholder="Search products..."
-          className="w-full p-2 border bg-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-black"
+    <div className="min-h-screen min-w-screen relative bg-gray-100 p-10">
+      <div className="mb-8 flex items-center justify-between">
+        <div className="w-[40%]">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="w-full rounded-md border border-gray-300 bg-white p-2 text-black placeholder:text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="flex items-center space-x-3 text-black">
+          <RxAvatar className="h-10 w-10 text-gray-700" />
+          <div className="flex flex-col">
+            <p className="font-semibold text-gray-800">John Doe</p>
+            <p className="text-sm text-gray-600">john.doe@example.com</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="mb-2 justify-center">
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          paginate={paginate}
+          perPage={perPage}
+          setPerPage={setPerPage}
         />
       </div>
 
-      {/* Floating Filter Button */}
       {!isFilterDrawerOpen && (
         <button
-          className="fixed top-8 right-8 bg-blue-600 text-white p-4 rounded-full shadow-lg z-50 hover:bg-blue-700 transition-colors duration-300 transform hover:scale-105"
-          onClick={() => setIsFilterDrawerOpen(!isFilterDrawerOpen)}
+          className="fixed bottom-8 right-8 z-50 transform rounded-full bg-blue-600 p-4 shadow-lg transition-colors duration-300 hover:scale-105 hover:bg-blue-700"
+          onClick={() => setIsFilterDrawerOpen(true)}
           aria-label="Open filter drawer"
         >
           <FaFilter />
         </button>
       )}
 
-      {/* Filter Drawer */}
       <FilterDrawer
         isFilterDrawerOpen={isFilterDrawerOpen}
         setIsFilterDrawerOpen={setIsFilterDrawerOpen}
+        products={allProducts}
+        setDisplayedProducts={setFilteredProducts}
       />
 
-      {/* Overlay */}
       {isFilterDrawerOpen && (
         <button
-          className="fixed inset-0 bg-black opacity-50 z-30 cursor-pointer border-none"
+          className="fixed inset-0 z-30 cursor-pointer border-none bg-black opacity-50"
           onClick={handleOverlayInteraction}
           onKeyDown={handleOverlayInteraction}
           aria-label="Close filter drawer"
@@ -92,56 +145,32 @@ export const ProductMain = () => {
         />
       )}
 
-      {/* Product Display */}
       <div
-        className={`grid gap-6 mt-4 "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        className={`mt-4 grid gap-6 ${
+          currentProducts.length > 0
+            ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+            : ""
         } transition-all duration-300 ease-in-out`}
       >
         {productIndexQuery.isLoading && (
-          <div className="col-span-full text-center text-gray-600 text-lg">
+          <div className="col-span-full text-center text-lg text-gray-600">
             Loading products...
           </div>
         )}
 
         {productIndexQuery.isError && (
-          <div className="col-span-full text-center text-red-600 text-lg">
+          <div className="col-span-full text-center text-lg text-red-600">
             Error loading products: {productIndexQuery.error.message}
           </div>
         )}
 
-        {products.length > 0
-          ? products.map((product) => (
-              <div
-                key={product.id}
-                className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center text-center transform hover:scale-105 transition-transform duration-200"
-              >
-                <img
-                  src={product.image}
-                  alt={product.title}
-                  className="w-32 h-32 object-contain mb-4 rounded-md"
-                />
-                <h3 className="text-md font-semibold mb-2 text-gray-800 line-clamp-2">
-                  {product.title}
-                </h3>
-                <p className="text-xl font-bold text-blue-600 mb-2">
-                  ${product.price.toFixed(2)}
-                </p>
-                <div className="flex items-center text-sm text-gray-600 mb-2">
-                  <span className="mr-1">
-                    ⭐ {product.rating.rate.toFixed(1)}
-                  </span>
-                  <span className="text-gray-500">
-                    ({product.rating.count} reviews)
-                  </span>
-                </div>
-                <button className="mt-auto bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-200">
-                  View Details
-                </button>
-              </div>
+        {currentProducts.length > 0 && !productIndexQuery.isLoading
+          ? currentProducts.map((product: IProduct) => (
+              <ProductItem product={product} key={product.id} />
             ))
           : !productIndexQuery.isLoading &&
             !productIndexQuery.isError && (
-              <div className="col-span-full text-center text-gray-600 text-lg">
+              <div className="col-span-full text-center text-lg text-gray-600">
                 No products found.
               </div>
             )}
