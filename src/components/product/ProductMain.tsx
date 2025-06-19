@@ -13,6 +13,7 @@ import { useUserContext } from "../../contexts/userContext";
 import { useAuth } from "../../hooks/useAuth";
 import { FiLogOut } from "react-icons/fi";
 import { useProduct } from "../../hooks/useProduct";
+import { usePageTitle } from "../../hooks/usePageTitle";
 
 export interface IProduct {
   id: number;
@@ -41,6 +42,8 @@ export const ProductMain = () => {
     applySearchFilter,
     handleSearchChange,
   } = useProduct();
+  
+  usePageTitle("Product | ArcMarketplace");
 
   const {
     currentItems: currentProducts,
@@ -57,7 +60,6 @@ export const ProductMain = () => {
     queryKey: ["products", { page: 1 }],
     queryFn: productService.getProducts,
   });
-
 
   const handleOverlayInteraction = (
     event: React.MouseEvent | React.KeyboardEvent
