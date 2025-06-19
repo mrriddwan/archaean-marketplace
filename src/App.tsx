@@ -1,9 +1,15 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./App.css";
-// import { Login } from "./components/auth/Login";
-import { UserContextProvider } from "./contexts/userContext";
+import { UserContextProvider, useUserContext } from "./contexts/userContext";
 import { ProductMain } from "./components/product/ProductMain";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Login } from "./components/auth/Login";
+
+const AuthententicatedSession = () => {
+  const { userContext } = useUserContext();
+
+  return userContext.isAuthenticated ? <ProductMain /> : <Login />;
+};
 
 function App() {
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -12,8 +18,7 @@ function App() {
     <GoogleOAuthProvider clientId={googleClientId}>
       <QueryClientProvider client={queryClient}>
         <UserContextProvider>
-          {/* <Login /> */}
-          <ProductMain />
+          <AuthententicatedSession />
         </UserContextProvider>
       </QueryClientProvider>
     </GoogleOAuthProvider>
