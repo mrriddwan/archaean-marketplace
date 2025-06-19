@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 //   refreshToken: string | null;
 // }
 
-export function useAuthHook() {
+export function useAuth() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { setUserContext } = useUserContext();
   const navigate = useNavigate();
@@ -65,6 +65,8 @@ export function useAuthHook() {
 
   const loginWithGoogle = useGoogleLogin({
     flow: "auth-code",
+    ux_mode: "popup",
+    redirect_uri: `https://${import.meta.env.VITE_FIREBASE_PROJECT_ID}.web.app/login`,
     onSuccess: (codeResponse) => {
       console.log({ codeResponse });
 

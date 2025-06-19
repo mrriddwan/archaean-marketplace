@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { IProduct } from "../components/product/ProductMain";
 
-export const useProductHook = () => {
+export const useProduct = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
 

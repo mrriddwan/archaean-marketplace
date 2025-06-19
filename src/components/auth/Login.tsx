@@ -1,8 +1,8 @@
 import { FcGoogle } from "react-icons/fc";
-import { useAuthHook } from "../../hooks/authHook";
+import { useAuth } from "../../hooks/useAuth";
 
 export const Login = () => {
-  const { loginWithGoogle, setIsAuthenticating, isAuthenticating } = useAuthHook();
+  const { loginWithGoogle, setIsAuthenticating, isAuthenticating } = useAuth();
 
   return (
     <div className="min-h-screen min-w-screen flex items-center justify-center bg-gray-100">

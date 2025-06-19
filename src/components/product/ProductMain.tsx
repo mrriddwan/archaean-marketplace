@@ -8,11 +8,11 @@ import { BiLoaderCircle } from "react-icons/bi";
 import { ProductItem } from "./ProductItem";
 import FilterDrawer from "./FilterDrawer";
 import { Pagination } from "../util/Pagination";
-import { usePagination } from "../../hooks/paginationHook";
+import { usePagination } from "../../hooks/usePagination";
 import { useUserContext } from "../../contexts/userContext";
-import { useAuthHook } from "../../hooks/authHook";
+import { useAuth } from "../../hooks/useAuth";
 import { FiLogOut } from "react-icons/fi";
-import { useProductHook } from "../../hooks/productHook";
+import { useProduct } from "../../hooks/useProduct";
 
 export interface IProduct {
   id: number;
@@ -33,14 +33,14 @@ export const ProductMain = () => {
 
   // hooks
   const { userContext } = useUserContext();
-  const { logout } = useAuthHook();
+  const { logout } = useAuth();
   const {
     searchQuery,
     filteredProducts,
     setFilteredProducts,
     applySearchFilter,
     handleSearchChange,
-  } = useProductHook();
+  } = useProduct();
 
   const {
     currentItems: currentProducts,
