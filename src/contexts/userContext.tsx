@@ -16,6 +16,9 @@ interface IUser {
 interface IUserContextValue {
   userContext: IUser;
   setUserContext: React.Dispatch<React.SetStateAction<IUser>>;
+  isLoading: boolean;
+  login: (userData: Partial<IUser>) => void;
+  logout: () => void;
 }
 
 export const initialUserContext: IUser = {
@@ -32,21 +35,26 @@ export const initialUserContext: IUser = {
 const UserContext = createContext<IUserContextValue>({
   userContext: initialUserContext,
   setUserContext: () => {},
+  isLoading: true,
+  login: () => {},
+  logout: () => {},
 });
 
 export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<IUser>(initialUserContext);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const accessToken = Cookies.get("accessToken");
+    const checkAuthStatus = async () => {
+      try {
+        const accessToken = Cookies.get("accessToken");
+        const refreshToken = Cookies.get("refreshToken");
 
-    if (accessToken) {
-      
-      authService
-        .getUserGoogleInfo(accessToken)
-        .then((res) => {
+        if (accessToken && refreshToken) {
+          const res = await authService.getUserGoogleInfo(accessToken);
+          
           if (res.data) {
             const userData = res.data;
             setUser({
@@ -60,17 +68,44 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
               isAuthenticated: true,
             });
           }
-        })
-        .catch((err) => {
-          console.error("Invalid token or failed to fetch user info", err);
+        } else {
+         
           setUser(initialUserContext);
-        });
-    }
+        }
+      } catch (err) {
+        console.error("Invalid token or failed to fetch user info", err);
+        logout()
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuthStatus();
   }, []);
 
+  const login = (userData: Partial<IUser>) => {
+    setUser(prev => ({
+      ...prev,
+      ...userData,
+      isAuthenticated: true,
+    }));
+  };
+
+  const logout = () => {
+    setUser(initialUserContext);
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
+  };
+
   const contextValue = useMemo(
-    () => ({ userContext: user, setUserContext: setUser }),
-    [user]
+    () => ({ 
+      userContext: user, 
+      setUserContext: setUser, 
+      isLoading,
+      login,
+      logout 
+    }),
+    [user, isLoading]
   );
 
   return (
