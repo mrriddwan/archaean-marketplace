@@ -2,27 +2,23 @@ import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import { useState } from "react";
 import { initialUserContext, useUserContext } from "../contexts/userContext";
 import { authService } from "../services/auth.service";
+import Cookies from "js-cookie";
 
-interface ICookie {
-  accessToken: string | null;
-  expiresIn: number | null;
-  refreshToken: string | null;
-}
+// interface ICookie {
+//   accessToken: string | null;
+//   expiresIn: number | null;
+//   refreshToken: string | null;
+// }
 export function useAuthHook() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const [authCookie, setAuthCookie] = useState<ICookie>({
-    accessToken: "",
-    expiresIn: null,
-    refreshToken: "",
-  });
   const { setUserContext } = useUserContext();
 
   const fetchUserInfo = async (access_token: string) => {
     const userInfo = await authService.getUserGoogleInfo(access_token);
 
     if (userInfo.data) {
-      console.log({ userInfo });
-      console.log("User Info:", userInfo.data);
+      // console.log({ userInfo });
+      // console.log("User Info:", userInfo.data);
 
       setUserContext({
         id: userInfo.data.sub,
@@ -55,19 +51,42 @@ export function useAuthHook() {
             const responseData = tokenResponse.data;
 
             // 2. set Cookie with required auth details
-            setAuthCookie({
-              refreshToken: responseData.refresh_token,
-              accessToken: responseData.access_token,
-              expiresIn: responseData.expires_in,
-            });
-            // 3. get user info with access token
-            fetchUserInfo(responseData.access_token);
+            const expiresInSeconds = responseData.expires_in;
 
-            // 4. get new Access token before expires
-            setTimeout(() => {
-              // gets a new token for you after 10 seconds (test purpose)
-              authService.getNewAccessToken(responseData.refresh_token);
-            }, 10000);
+            Cookies.set("accessToken", responseData.access_token, {
+              expires: expiresInSeconds / 86400,
+            });
+            Cookies.set("refreshToken", responseData.refresh_token, {
+              expires: 7,
+            });
+
+            // 3. get user info with access token + get new access token before expires
+            const refreshTime = expiresInSeconds * 0.9 * 1000; // ms
+
+            function getNewRefreshToken() {
+              setTimeout(async () => {
+                try {
+                  const newTokenRes: any = await authService.getNewAccessToken(
+                    responseData.refresh_token
+                  );
+
+                  if (newTokenRes?.data?.access_token) {
+                    const newAccessToken = newTokenRes.data.access_token;
+                    const newExpiresIn = newTokenRes.data.expires_in;
+
+                    Cookies.set("accessToken", newAccessToken, {
+                      expires: newExpiresIn / 86400,
+                    });
+
+                    fetchUserInfo(newAccessToken);
+
+                    getNewRefreshToken();
+                  }
+                } catch (e) {
+                  console.error("Failed to refresh access token:", e);
+                }
+              }, refreshTime);
+            }
           }
         } catch (error) {
           console.log(error);
@@ -81,16 +100,15 @@ export function useAuthHook() {
 
   const logout = () => {
     googleLogout();
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
     setUserContext(initialUserContext);
   };
 
   return {
     //states
     isAuthenticating,
-    authCookie,
-    //setter
     setIsAuthenticating,
-    setAuthCookie,
 
     //methods
     fetchUserInfo,
