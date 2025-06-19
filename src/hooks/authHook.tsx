@@ -3,6 +3,7 @@ import { useState } from "react";
 import { initialUserContext, useUserContext } from "../contexts/userContext";
 import { authService } from "../services/auth.service";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 // interface ICookie {
 //   accessToken: string | null;
@@ -13,7 +14,8 @@ import Cookies from "js-cookie";
 export function useAuthHook() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { setUserContext } = useUserContext();
-
+  const navigate = useNavigate();
+  const { login } = useUserContext();
   const fetchUserInfo = async (access_token: string) => {
     const userInfo = await authService.getUserGoogleInfo(access_token);
 
@@ -86,10 +88,29 @@ export function useAuthHook() {
               expires: 7,
             });
 
-            // 3. get user info with access token + get new access token before expires
-            const refreshTime = expiresInSeconds * 0.9 * 1000; // ms
+            // 3. Get user info and update context
+            const userInfoResponse = await authService.getUserGoogleInfo(
+              responseData.access_token
+            );
 
+            if (userInfoResponse?.data) {
+              const userData = userInfoResponse.data;
+              login({
+                id: userData.sub,
+                email: userData.email,
+                name: userData.name,
+                picture: userData.picture,
+                given_name: userData.given_name,
+                family_name: userData.family_name,
+                email_verified: userData.email_verified,
+              });
+            }
+
+            // 4. get new access token before expires
+            const refreshTime = expiresInSeconds * 0.9 * 1000; // ms
             getNewRefreshToken(responseData.refresh_token, refreshTime);
+
+            navigate("/products", { replace: true });
           }
         } catch (error) {
           console.log(error);
@@ -106,6 +127,7 @@ export function useAuthHook() {
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
     setUserContext(initialUserContext);
+    navigate("/login");
   };
 
   return {
