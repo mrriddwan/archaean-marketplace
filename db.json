@@ -1,76 +1,196 @@
 {
-    "products": [
-        {
-            "id": 1,
-            "title": "Product 1",
-            "price": 19.99,
-            "description": "Lorem ipsum dolor sit amet",
-            "category": "electronics",
-            "image": "https://prd.place/400",
-            "rating": {
-                "rate": 4.5,
-                "count": 120
-            }
-        },
-        {
-            "id": 2,
-            "title": "Product 2",
-            "price": 29.99,
-            "description": "Lorem ipsum dolor sit amet consectetur",
-            "category": "clothing",
-            "image": "https://prd.place/400",
-            "rating": {
-                "rate": 4.2,
-                "count": 85
-            }
-        },
-        {
-            "id": 3,
-            "title": "Product 3",
-            "price": 39.99,
-            "description": "Lorem ipsum dolor sit amet consectetur adipiscing",
-            "category": "home",
-            "image": "https://prd.place/400",
-            "rating": {
-                "rate": 4.8,
-                "count": 203
-            }
-        },
-        {
-            "id": 4,
-            "title": "Product 4",
-            "price": 15.99,
-            "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit",
-            "category": "books",
-            "image": "https://prd.place/400",
-            "rating": {
-                "rate": 4.1,
-                "count": 67
-            }
-        },
-        {
-            "id": 5,
-            "title": "Product 5",
-            "price": 49.99,
-            "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit sed",
-            "category": "sports",
-            "image": "https://prd.place/400",
-            "rating": {
-                "rate": 4.6,
-                "count": 154
-            }
-        },
-        {
-            "id": 6,
-            "title": "Product 6",
-            "price": 24.99,
-            "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do",
-            "category": "electronics",
-            "image": "https://prd.place/400",
-            "rating": {
-                "rate": 4.3,
-                "count": 92
-            }
-        }
-    ]
+  "products": [
+    {
+      "id": 1,
+      "title": "Product 1",
+      "price": 19.99,
+      "description": "Lorem ipsum dolor sit amet",
+      "category": "electronics",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.5,
+        "count": 120
+      }
+    },
+    {
+      "id": 2,
+      "title": "Product 2",
+      "price": 29.99,
+      "description": "Lorem ipsum dolor sit amet consectetur",
+      "category": "clothing",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.2,
+        "count": 85
+      }
+    },
+    {
+      "id": 3,
+      "title": "Product 3",
+      "price": 39.99,
+      "description": "Lorem ipsum dolor sit amet consectetur adipiscing",
+      "category": "home",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.8,
+        "count": 203
+      }
+    },
+    {
+      "id": 4,
+      "title": "Product 4",
+      "price": 15.99,
+      "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit",
+      "category": "books",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.1,
+        "count": 67
+      }
+    },
+    {
+      "id": 5,
+      "title": "Product 5",
+      "price": 49.99,
+      "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit sed",
+      "category": "sports",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.6,
+        "count": 154
+      }
+    },
+    {
+      "id": 6,
+      "title": "Product 6",
+      "price": 24.99,
+      "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do",
+      "category": "electronics",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.3,
+        "count": 92
+      }
+    },
+    {
+      "id": 7,
+      "title": "Product 7",
+      "price": 59.99,
+      "description": "High-quality noise-cancelling headphones",
+      "category": "electronics",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.7,
+        "count": 178
+      }
+    },
+    {
+      "id": 8,
+      "title": "Product 8",
+      "price": 12.99,
+      "description": "Comfortable cotton t-shirt in multiple colors",
+      "category": "clothing",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.0,
+        "count": 140
+      }
+    },
+    {
+      "id": 9,
+      "title": "Product 9",
+      "price": 89.99,
+      "description": "Ergonomic office chair with lumbar support",
+      "category": "home",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.5,
+        "count": 210
+      }
+    },
+    {
+      "id": 10,
+      "title": "Product 10",
+      "price": 7.99,
+      "description": "Bestselling mystery novel",
+      "category": "books",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.2,
+        "count": 97
+      }
+    },
+    {
+      "id": 11,
+      "title": "Product 11",
+      "price": 99.99,
+      "description": "Smartwatch with fitness tracking features",
+      "category": "electronics",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.6,
+        "count": 165
+      }
+    },
+    {
+      "id": 12,
+      "title": "Product 12",
+      "price": 19.99,
+      "description": "Men’s athletic shorts with moisture-wicking fabric",
+      "category": "clothing",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.1,
+        "count": 88
+      }
+    },
+    {
+      "id": 13,
+      "title": "Product 13",
+      "price": 22.99,
+      "description": "LED desk lamp with USB charging port",
+      "category": "home",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.4,
+        "count": 110
+      }
+    },
+    {
+      "id": 14,
+      "title": "Product 14",
+      "price": 11.99,
+      "description": "Inspirational self-help book",
+      "category": "books",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.3,
+        "count": 56
+      }
+    },
+    {
+      "id": 15,
+      "title": "Product 15",
+      "price": 34.99,
+      "description": "Yoga mat with carrying strap",
+      "category": "sports",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.5,
+        "count": 123
+      }
+    },
+    {
+      "id": 16,
+      "title": "Product 16",
+      "price": 74.99,
+      "description": "Bluetooth speaker with deep bass",
+      "category": "electronics",
+      "image": "https://prd.place/400",
+      "rating": {
+        "rate": 4.6,
+        "count": 199
+      }
+    }
+  ]
 }
