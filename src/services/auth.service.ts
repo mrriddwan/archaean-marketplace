@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 export interface IRefreshTokenResponse {
     access_token: string,
     expires_in: number,
@@ -73,7 +72,7 @@ class AuthService {
                 },
             })
             .then((res: any) => {
-                return res.data;
+                return res;
             })
             .then((res) => {
                 console.log('new token response: ', res);
