@@ -16,13 +16,13 @@ export const Pagination = ({
   const perPageOptions = [5, 10, 15, 20, 25];
 
   return (
-    <div className="mt-8 flex flex-row items-center justify-center space-y-4 sm:space-x-4 sm:space-y-0 text-xs">
+    <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-y-3 sm:gap-y-0 sm:gap-x-6 text-sm">
       {/* Page Navigation */}
-      <div className="flex items-center space-x-2">
+      <div className="flex flex-wrap items-center justify-center gap-2">
         <button
           onClick={() => paginate(currentPage - 1)}
           disabled={currentPage === 1}
-          className="rounded-md bg-gray-300 px-4 py-2 text-white hover:bg-gray-400 disabled:opacity-50"
+          className="rounded-md bg-gray-300 px-3 py-2 text-white hover:bg-gray-400 disabled:opacity-50"
         >
           <FaCircleChevronLeft />
         </button>
@@ -31,7 +31,7 @@ export const Pagination = ({
           <button
             key={i + 1}
             onClick={() => paginate(i + 1)}
-            className={`rounded-md px-4 py-2 ${
+            className={`rounded-md px-3 py-2 transition ${
               currentPage === i + 1
                 ? "bg-blue-600 text-white"
                 : "bg-gray-300 text-white hover:bg-gray-400"
@@ -44,19 +44,22 @@ export const Pagination = ({
         <button
           onClick={() => paginate(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="rounded-md bg-gray-300 px-4 py-2 text-white hover:bg-gray-400 disabled:opacity-50"
+          className="rounded-md bg-gray-300 px-3 py-2 text-white hover:bg-gray-400 disabled:opacity-50"
         >
           <FaCircleChevronRight />
         </button>
       </div>
 
-      {/* Per Page */}
+      {/* Per Page Selector */}
       <div className="flex items-center gap-2">
+        <label htmlFor="perPage" className="text-gray-700">
+          Show
+        </label>
         <select
           id="perPage"
           value={perPage}
           onChange={(e) => setPerPage(Number(e.target.value))}
-          className="rounded-md border border-gray-300 text-black p-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="rounded-md border border-gray-300 bg-white text-black px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           {perPageOptions.map((option) => (
             <option key={option} value={option}>
@@ -64,10 +67,7 @@ export const Pagination = ({
             </option>
           ))}
         </select>
-
-        <label htmlFor="perPage" className="text-sm font-medium text-gray-700">
-          per page
-        </label>
+        <span className="text-gray-700">per page</span>
       </div>
     </div>
   );
