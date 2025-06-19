@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 //   expiresIn: number | null;
 //   refreshToken: string | null;
 // }
+
 export function useAuthHook() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { setUserContext } = useUserContext();
@@ -34,6 +35,31 @@ export function useAuthHook() {
 
     setIsAuthenticating(false);
   };
+
+  function getNewRefreshToken(refreshToken: string, refreshTime: number) {
+    setTimeout(async () => {
+      try {
+        const newTokenRes: any = await authService.getNewAccessToken(
+          refreshToken
+        );
+
+        if (newTokenRes?.data?.access_token) {
+          const newAccessToken = newTokenRes.data.access_token;
+          const newExpiresIn = newTokenRes.data.expires_in;
+
+          Cookies.set("accessToken", newAccessToken, {
+            expires: newExpiresIn / 86400,
+          });
+
+          fetchUserInfo(newAccessToken);
+
+          getNewRefreshToken(newTokenRes?.data?.refresh_token, refreshTime);
+        }
+      } catch (e) {
+        console.error("Failed to refresh access token:", e);
+      }
+    }, refreshTime);
+  }
 
   const loginWithGoogle = useGoogleLogin({
     flow: "auth-code",
@@ -63,30 +89,7 @@ export function useAuthHook() {
             // 3. get user info with access token + get new access token before expires
             const refreshTime = expiresInSeconds * 0.9 * 1000; // ms
 
-            function getNewRefreshToken() {
-              setTimeout(async () => {
-                try {
-                  const newTokenRes: any = await authService.getNewAccessToken(
-                    responseData.refresh_token
-                  );
-
-                  if (newTokenRes?.data?.access_token) {
-                    const newAccessToken = newTokenRes.data.access_token;
-                    const newExpiresIn = newTokenRes.data.expires_in;
-
-                    Cookies.set("accessToken", newAccessToken, {
-                      expires: newExpiresIn / 86400,
-                    });
-
-                    fetchUserInfo(newAccessToken);
-
-                    getNewRefreshToken();
-                  }
-                } catch (e) {
-                  console.error("Failed to refresh access token:", e);
-                }
-              }, refreshTime);
-            }
+            getNewRefreshToken(responseData.refresh_token, refreshTime);
           }
         } catch (error) {
           console.log(error);
