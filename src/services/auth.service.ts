@@ -33,12 +33,17 @@ class AuthService {
     };
 
     async getRefreshToken(authCode: string) {
+        const redirectUri =
+            window.location.hostname === 'localhost'
+                ? 'http://localhost:5173'
+                : import.meta.env.VITE_REDIRECT_URI;
+
         let payload = {
             grant_type: 'authorization_code',
             code: authCode,
             client_id: googleClientId,
             client_secret: googleClientSecret,
-            redirect_uri: 'http://localhost:5173',
+            redirect_uri: redirectUri
         };
 
         try {
