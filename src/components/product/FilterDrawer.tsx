@@ -77,11 +77,16 @@ export default function FilterDrawer({
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 z-40 h-96 overflow-y-auto rounded-t-lg bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out ${
-        isFilterDrawerOpen ? "translate-y-0" : "translate-y-full"
-      }`}
+      className={`
+    fixed bottom-0 left-0 right-0 md:top-0 md:right-0 md:left-auto md:bottom-auto z-40 w-full md:h-full md:w-96 overflow-y-auto rounded-t-lg bg-white p-6 shadow-2xl transition-transform duration-300 ease-in-out
+    ${
+      isFilterDrawerOpen
+        ? "translate-y-0 md:translate-x-0"
+        : "translate-y-full md:translate-x-full"
+    }
+  `}
     >
-      <div className="mb-6 flex items-center justify-end">
+      <div className="mb-6 flex md:flex-col items-center justify-end">
         <button
           className="p-1 text-gray-500 hover:text-gray-700"
           onClick={() => setIsFilterDrawerOpen(false)}
@@ -91,8 +96,8 @@ export default function FilterDrawer({
         </button>
       </div>
 
-      <div className="flex flex-col space-y-6 md:flex-row md:space-x-8 md:space-y-0">
-        <div className="flex w-full flex-col md:flex-row md:space-x-8">
+      <div className="flex flex-col space-y-6 md:space-x-8 md:space-y-0 gap-10">
+        <div className="flex md:w-full flex-col md:flex-col md:space-x-8 gap-10">
           {/* Price Range Section */}
           <div className="w-full px-5">
             <h3 className="mb-3 text-lg font-semibold text-gray-700">
@@ -155,7 +160,7 @@ export default function FilterDrawer({
         </div>
       </div>
 
-      <div className="mt-6 flex gap-3 border-t border-gray-200 pt-4">
+      <div className="mt-6 flex md:flex-col gap-3 border-t border-gray-200 pt-4">
         <button
           onClick={handleApplyFilters}
           className="flex-1 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700"
