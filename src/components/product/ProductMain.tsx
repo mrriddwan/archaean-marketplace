@@ -12,6 +12,7 @@ import { usePagination } from "../../hooks/paginationHook";
 import { useUserContext } from "../../contexts/userContext";
 import { useAuthHook } from "../../hooks/authHook";
 import { FiLogOut } from "react-icons/fi";
+import { useProductHook } from "../../hooks/productHook";
 
 export interface IProduct {
   id: number;
@@ -28,16 +29,18 @@ export interface IProduct {
 
 export const ProductMain = () => {
   const [allProducts, setAllProducts] = useState<IProduct[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<IProduct[]>([]);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState<string>("");
 
+  // hooks
   const { userContext } = useUserContext();
-
-  const productIndexQuery = useQuery({
-    queryKey: ["products", { page: 1 }],
-    queryFn: productService.getProducts,
-  });
+  const { logout } = useAuthHook();
+  const {
+    searchQuery,
+    filteredProducts,
+    setFilteredProducts,
+    applySearchFilter,
+    handleSearchChange,
+  } = useProductHook();
 
   const {
     currentItems: currentProducts,
@@ -49,38 +52,12 @@ export const ProductMain = () => {
     setPerPage,
   } = usePagination(filteredProducts);
 
-  useEffect(() => {
-    if (productIndexQuery.isSuccess && productIndexQuery.data) {
-      setAllProducts(productIndexQuery.data);
-      applySearchFilter(productIndexQuery.data, searchQuery);
-    }
-  }, [productIndexQuery.isSuccess, productIndexQuery.data]);
+  // query
+  const productIndexQuery = useQuery({
+    queryKey: ["products", { page: 1 }],
+    queryFn: productService.getProducts,
+  });
 
-  useEffect(() => {
-    applySearchFilter(allProducts, searchQuery);
-    setCurrentPage(1);
-  }, [searchQuery, allProducts]);
-
-  const {logout} = useAuthHook()
-
-  const applySearchFilter = (productsToFilter: IProduct[], query: string) => {
-    if (!query) {
-      setFilteredProducts(productsToFilter);
-      return;
-    }
-    const lowercasedQuery = query.toLowerCase();
-    const filtered = productsToFilter.filter(
-      (product) =>
-        product.title.toLowerCase().includes(lowercasedQuery) ||
-        product.description.toLowerCase().includes(lowercasedQuery) ||
-        product.category.toLowerCase().includes(lowercasedQuery)
-    );
-    setFilteredProducts(filtered);
-  };
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-  };
 
   const handleOverlayInteraction = (
     event: React.MouseEvent | React.KeyboardEvent
@@ -93,6 +70,18 @@ export const ProductMain = () => {
       setIsFilterDrawerOpen(false);
     }
   };
+
+  useEffect(() => {
+    if (productIndexQuery.isSuccess && productIndexQuery.data) {
+      setAllProducts(productIndexQuery.data);
+      applySearchFilter(productIndexQuery.data, searchQuery);
+    }
+  }, [productIndexQuery.isSuccess, productIndexQuery.data]);
+
+  useEffect(() => {
+    applySearchFilter(allProducts, searchQuery);
+    setCurrentPage(1);
+  }, [searchQuery, allProducts]);
 
   return (
     <div className="min-h-screen w-screen bg-gray-100 p-4 sm:p-10 relative">
@@ -114,10 +103,10 @@ export const ProductMain = () => {
           </div>
 
           <button
-            onClick={() => logout() }
+            onClick={() => logout()}
             className="rounded-md bg-gray-300 text-white hover:bg-gray-400 disabled:opacity-50"
           >
-            <FiLogOut className="w-3 h-3"/>
+            <FiLogOut className="w-3 h-3" />
           </button>
         </div>
       </div>
